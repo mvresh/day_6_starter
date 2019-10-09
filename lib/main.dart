@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:day_5_starter/quiz_brain.dart';
-import 'package:day_5_starter/question.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 void main() {
   runApp(Quizlr());
 }
@@ -29,23 +29,56 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
+  int scoreCounter = 0;
 
   QuizBrain brain = QuizBrain();
 
   void checkAnswer(bool userAnswer) {
     setState(() {
+      print(brain.currentQuestionNumber());
+      if (brain.currentQuestionNumber() == brain.questions.length-1){
+        Alert(
+          context: context,
+          type: AlertType.error,
+          title: "Quiz Completed",
+          desc: "You have reached the end of the quiz and scored ${scoreCounter} out of ${brain.questions.length}",
+          buttons: [
+            DialogButton(
+              child: Text(
+                "RESTART",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              onPressed: (){
+                setState(() {
+                  Navigator.pop(context);
+                  scoreCounter = 0;
+                  brain.resetQuestionNumber();
+                  scoreKeeper = [];
+                });
+              },
+              width: 120,
+            )
+          ],
+        ).show();
+      }
+
       if (brain.correctAnswer(userAnswer)) {
         scoreKeeper.add(Icon(
           Icons.check,
           color: Colors.green,
         ));
+        scoreCounter++;
       } else {
         scoreKeeper.add(Icon(
           Icons.close,
           color: Colors.red,
         ));
       }
-      brain.nextQuestion();
+
+      if(brain.currentQuestionNumber() < brain.questions.length-1){
+        brain.nextQuestion();
+      }
+
     });
   }
 

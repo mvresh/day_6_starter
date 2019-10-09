@@ -40,5 +40,12 @@ class QuizBrain{
   nextQuestion (){
     questionNumber ++;
   }
+  int currentQuestionNumber(){
+    return questionNumber;
+  }
+
+resetQuestionNumber(){
+    questionNumber = 0;
+}
 }
 
